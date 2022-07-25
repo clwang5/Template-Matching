@@ -3,25 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
-using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using System.Threading;
-using System.Xml;
-using System.Xml.Linq;
-/*using Emgu.CV;
-using Emgu.CV.CvEnum;
-using Emgu.CV.Structure;
-using Emgu.CV.UI;
-using Emgu.CV.Util;
-using Emgu.CV.VideoSurveillance;
-using Emgu.Util;
-using NUnit.Framework;
-using Emgu.CV.VideoStab;*/
+
 using OpenCvSharp;
 using NumSharp;
 using Point = OpenCvSharp.Point;
@@ -39,7 +21,7 @@ namespace templateMatching
         static void Main(string[] args)
         {
 
-            StaticImageTemplate();
+            FeatureDetection(Feature.face);
         }
 
         public enum Selection { template, srcImg }
@@ -115,7 +97,7 @@ namespace templateMatching
 
                         if (maxval >= threshold)
                         {
-                            //Setup the rectangle to draw
+                            //Create the rectangle to draw
                             Rect r = new Rect(new Point(maxloc.X, maxloc.Y), new Size(templateImg.Width, templateImg.Height));
                             //System.Console.WriteLine($"MinVal={minval.ToString()} MaxVal={maxval.ToString()} MinLoc={minloc.ToString()} MaxLoc={maxloc.ToString()} Rect={r.ToString()}");
 
@@ -167,7 +149,7 @@ namespace templateMatching
 
                         if (maxval >= threshold)
                         {
-                            //Setup the rectangle to draw
+                            //Create the rectangle to draw
                             Rect r = new Rect(new Point(maxloc.X, maxloc.Y), new Size(templateImg.Width, templateImg.Height));
                             //System.Console.WriteLine($"MinVal={minval.ToString()} MaxVal={maxval.ToString()} MinLoc={minloc.ToString()} MaxLoc={maxloc.ToString()} Rect={r.ToString()}");
 
@@ -184,6 +166,45 @@ namespace templateMatching
 
                     Cv2.ImShow("Template Matching", srcImage);
                     Cv2.WaitKey(0);
+                }
+            }
+        }
+        public enum Feature { face, eyes }
+        public static void FeatureDetection(Feature feature)
+        {
+            CascadeClassifier cc;
+            if (feature == Feature.face)
+            {
+                cc = new CascadeClassifier("haarcascade_frontalface_alt.xml");
+            }
+            else if (feature == Feature.eyes)
+            {
+                cc = new CascadeClassifier("haarcascade_eye.xml");
+            }
+            else {
+                cc = new CascadeClassifier();
+            }
+
+            using (VideoCapture capture = new VideoCapture(0))
+            using (Window window = new Window("Webcam"))
+            using (Mat srcImage = new Mat())
+            using (Mat detectedFaceImage = new Mat())
+            {
+                while (capture.IsOpened())
+                {
+                    capture.Read(srcImage);
+
+                    Rect[] faces = cc.DetectMultiScale(srcImage, minSize: new Size(20, 20));
+
+                    foreach (Rect rect in faces) {
+                        Cv2.Rectangle(srcImage, rect, new Scalar(0,0,255),2);
+                    }
+                    window.ShowImage(srcImage);
+                    int key = Cv2.WaitKey(1);
+                    if (key == 27)
+                    {
+                        break;
+                    }
                 }
             }
         }
