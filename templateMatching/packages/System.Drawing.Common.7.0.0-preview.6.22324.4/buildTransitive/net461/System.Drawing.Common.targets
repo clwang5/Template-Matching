@@ -1,0 +1,6 @@
+<Project InitialTargets="NETStandardCompatError_System_Drawing_Common_net462">
+  <Target Name="NETStandardCompatError_System_Drawing_Common_net462"
+          Condition="'$(SuppressTfmSupportBuildWarnings)' == ''">
+    <Error Text="System.Drawing.Common doesn't support $(TargetFramework). Consider updating your TargetFramework to net462 or later." />
+  </Target>
+</Project>
