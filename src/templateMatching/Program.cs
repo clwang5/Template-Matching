@@ -20,7 +20,6 @@ namespace templateMatching
         [STAThread]
         static void Main(string[] args)
         {
-
             FeatureDetection(Feature.face);
         }
 
@@ -102,7 +101,7 @@ namespace templateMatching
                             //System.Console.WriteLine($"MinVal={minval.ToString()} MaxVal={maxval.ToString()} MinLoc={minloc.ToString()} MaxLoc={maxloc.ToString()} Rect={r.ToString()}");
 
                             //Draw a rectangle of the matching area
-                            Cv2.Rectangle(srcImage, r, Scalar.LimeGreen, 2);
+                            Cv2.Rectangle(srcImage, r, Scalar.Red, 2);
 
                             //Fill in the res Mat so you don't find the same area again in the MinMaxLoc
                             Rect outRect;
